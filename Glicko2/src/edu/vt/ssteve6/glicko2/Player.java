@@ -110,7 +110,7 @@ public class Player {
 	
 	public double E(double mu, double phi)
 	{
-		return 1 / (1 + Math.exp(-1 * getPhi() * (getMu() - mu)));
+		return 1 / (1 + Math.exp(-1 * phi * (getMu() - mu)));
 	}
 
 	private double f(double x, double delta, double v, double a) {
@@ -119,8 +119,8 @@ public class Player {
 				- (x - a) / Math.pow(Glicko2.getTau(), 2);
 	}
 
-	public void calcNewVolatility(double v, double delta) {
-		System.out.println("Player.calcNewVolatility");
+	public void calcNewValues(double v, double delta) {
+		System.out.println("Player.calcNewValues");
 		double a, A, B, epsilon;
 
 		a = Math.log(Math.pow(getVolativity(), 2));
@@ -154,10 +154,7 @@ public class Player {
 		while (Math.abs(B - A) > epsilon) {
 			Double fC;
 			Double C = A + (A - B) * fA / (fB - fA);
-			fC = f(C, delta, v, a);
-
-			System.out.println("\t A = " + A + ", B = " + B + ", C = " + C);
-			System.out.println("\t fA = " + fA + ", fB = " + fB + ", fC = " + fC);
+			fC = f(C, delta, v, a);			
 
 			if (fC * fB < 0) {
 				A = B;
@@ -168,6 +165,9 @@ public class Player {
 
 			B = C;
 			fB = fC;
+			
+			System.out.println("\t A = " + A + ", B = " + B + ", C = " + C);
+			System.out.println("\t fA = " + fA + ", fB = " + fB + ", fC = " + fC);
 		}
 
 		System.out.println("\tExiting loop ...");
@@ -175,9 +175,14 @@ public class Player {
 		System.out.println("\t setting volatility");
 
 		double volPrime = Math.exp(A / 2);
-		double phiStar = Math.sqrt(Math.pow(getPhi(), 2) + Math.pow(getVolativity(), 2 * Glicko2.getTau()));
-		double phiPrime = 1 / Math.sqrt((1 / Math.pow(phiStar, 2)) + (1 / v));
-		double muPrime = getMu() + Math.pow(getPhi(), Glicko2.getTau() * 2) * delta / v;
+		double phiStar = Math.sqrt(Math.pow(getPhi(), 2) + Math.pow(volPrime, 2));
+		double phiPrime = Math.pow(Math.sqrt((1 / Math.pow(phiStar, 2)) + (1 / v)),-1);
+		double muPrime = getMu() + Math.pow(phiPrime, 2) * ( delta / v );
+		
+//		System.out.println("\t v = " + v);
+		
+		System.out.println("\t Phi = " + getPhi());
+		System.out.println("\t Phi* = " + phiStar);
 
 		System.out.println("\t New Vol = " + volPrime);
 		System.out.println("\t New Phi = " + phiPrime);

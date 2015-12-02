@@ -1,10 +1,10 @@
-/**
- *
- */
 package edu.vt.ssteve6.glicko2;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import edu.vt.ssteve6.glicko2.Glicko2;
+import edu.vt.ssteve6.glicko2.Player;
 
 /**
  * @author u775329
@@ -81,13 +81,18 @@ public class Competition {
     
     private double V(Player player, Player opponent)
     {
-        return Math.pow(opponent.getPhi(), 2)
-                * player.E(opponent.getMu(), opponent.getPhi())
-                * (1 - player.E(opponent.getMu(), opponent.getPhi()));
+//    	System.out.println("Competition.V()");
+    	System.out.println("\t["+opponent+"] mu = "+opponent.getMu() + ", phi = "+opponent.getPhi() + ", "
+    			+ "g = "+Glicko2.g(opponent.getPhi()) + ", "
+    			+ "E() = "+ Glicko2.E(player.getMu(), opponent.getMu(), opponent.getPhi()));
+        return Math.pow(Glicko2.g(opponent.getPhi()), 2)
+                * Glicko2.E(player.getMu(), opponent.getMu(), opponent.getPhi())
+                * (1 - Glicko2.E(player.getMu(), opponent.getMu(), opponent.getPhi()));
     }
 
     private double Delta(Player player, Player opponent) {
-        return opponent.getPhi() * (players.get(player).get(opponent) - player.E(opponent.getMu(), opponent.getPhi()));
+        return Glicko2.g(opponent.getPhi()) * 
+        		(players.get(player).get(opponent) - Glicko2.E(player.getMu(), opponent.getMu(), opponent.getPhi()));
     }
 
     public void process(Player player) {
@@ -104,10 +109,18 @@ public class Competition {
 
             Player key = opps.nextElement();
             
-            v += V(player, key);
+            Double tV = V(player, key);
+            
+//            System.out.println("v ("+player+", "+key+") = "+tV);
+            
+            v += tV;
                  
         }
+        
+        v = Math.pow(v, -1);
+        
         System.out.println("\t end v");
+        System.out.println("\t V = " + v);
 
         opps = opponents.keys();
 
@@ -116,13 +129,20 @@ public class Competition {
 
             Player key = opps.nextElement();
 
-            delta += v * Delta(player, key);
+            delta += Delta(player, key);
 
         }
+        
+        System.out.println("\t Delta w/o V = " + delta);
+        
+        delta *= v;
+        
         System.out.println("\t end delta");
+        
+        System.out.println("\t delta = " + delta);
 
         System.out.println("\t calcing");
-        player.calcNewVolatility(v, delta);
+        player.calcNewValues(v, delta);
 
     }
 

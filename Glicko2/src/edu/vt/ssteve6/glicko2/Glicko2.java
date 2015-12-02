@@ -61,4 +61,14 @@ public class Glicko2 {
 		return new Competition(name);
 	}
 	
+	public static Double g(double phi)
+	{
+		return 1 / Math.sqrt(1 + 3 * Math.pow(phi, 2) / Math.pow(Math.PI, 2));
+	}
+	
+	public static double E(double mu, double mu_j, double phi_j)
+	{
+		return 1 / ( 1 + Math.exp(-1 * g(phi_j) * (mu - mu_j) ) );
+	}
+	
 }
