@@ -20,16 +20,16 @@ public class Competition {
 
 	private Hashtable<Player, Hashtable<Player, Double>> players;
 
+	public Competition(String name) {
+		setName(name);
+		players = new Hashtable<Player, Hashtable<Player, Double>>();
+	}
+
 	/**
 	 * @return the players
 	 */
 	public Hashtable<Player, Hashtable<Player, Double>> getPlayers() {
 		return players;
-	}
-
-	public Competition(String name) {
-		setName(name);
-		players = new Hashtable<>();
 	}
 
 	public String getName() {
@@ -80,8 +80,8 @@ public class Competition {
 	public void process(Player player)
 	{
 		Enumeration<Player> keys = players.get(player).keys();
-		
-		Hashtable<Player, Hashtable<String, Double>> values = new Hashtable<>();
+
+		Hashtable<Player, Hashtable<String, Double>> values = new Hashtable<Player, Hashtable<String, Double>>();
 	}
 
 }
