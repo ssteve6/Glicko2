@@ -13,10 +13,10 @@ public class Main {
 		Glicko2.setDefaultDeviation(350);
 		Glicko2.setDefaultVolativity(0.6);
 
-		Player p1 = Glicko2.newPlayer("P1", 1500, 200, 0.6);
-		Player p2 = Glicko2.newPlayer("P2", 1400, 30, 0.6);
-		Player p3 = Glicko2.newPlayer("P3", 1550, 100, 0.6);
-		Player p4 = Glicko2.newPlayer("P4", 1700, 300, 0.6);
+		Player p1 = Glicko2.newPlayer("P1", 1500, 200, 0.06);
+		Player p2 = Glicko2.newPlayer("P2", 1400, 30, 0.06);
+		Player p3 = Glicko2.newPlayer("P3", 1550, 100, 0.06);
+		Player p4 = Glicko2.newPlayer("P4", 1700, 300, 0.06);
 
 		Competition comp = Glicko2.newCompetition("Test Comp");
 
@@ -27,7 +27,8 @@ public class Main {
 
 		comp.roundRobin();
 
-		System.out.println(comp.getPlayers().toString());
+		System.out.println("Before results:");
+		System.out.println("\t" + comp.getPlayers().toString());
 		
 		comp.recordResult(p1, p2, Competition.WIN, true);
 		comp.recordResult(p1, p3, Competition.LOSE, true);
@@ -37,11 +38,14 @@ public class Main {
 		comp.recordResult(p2,  p4, Competition.TIE, true);
 		
 		comp.recordResult(p3,  p4, Competition.LOSE, true);
-		
-		System.out.println(comp.getPlayers().toString());
-                
-                
-		
+
+		System.out.println("After results:");
+		System.out.println("\t" + comp.getPlayers().toString());
+
+		comp.process(p1);
+
+		System.out.println("After processing P1:");
+		System.out.println("\t" + comp.getPlayers().toString());
 
 	}
 

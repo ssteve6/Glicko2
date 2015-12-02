@@ -81,21 +81,25 @@ public class Competition {
     
     private double V(Player player, Player opponent)
     {
-        return Math.pow(opponent.phi(), 2)
-                * player.E(opponent.mu(),opponent.phi())
-                * (1 - player.E(opponent.mu(), opponent.phi()));
+        return Math.pow(opponent.getPhi(), 2)
+                * player.E(opponent.getMu(), opponent.getPhi())
+                * (1 - player.E(opponent.getMu(), opponent.getPhi()));
+    }
+
+    private double Delta(Player player, Player opponent) {
+        return opponent.getPhi() * (players.get(player).get(opponent) - player.E(opponent.getMu(), opponent.getPhi()));
     }
 
     public void process(Player player) {
-
+        System.out.println("Competition.process");
         Hashtable<Player, Double> opponents = players.get(player);
 
         Enumeration<Player> opps = opponents.keys();
 
-		Hashtable<Player, Hashtable<String, Double>> values = new Hashtable<Player, Hashtable<String, Double>>();
-
 		double v = 0;
+        double delta = 0;
 
+        System.out.println("\t begin v");
         while (opps.hasMoreElements()) {
 
             Player key = opps.nextElement();
@@ -103,6 +107,22 @@ public class Competition {
             v += V(player, key);
                  
         }
+        System.out.println("\t end v");
+
+        opps = opponents.keys();
+
+        System.out.println("\t begin delta");
+        while (opps.hasMoreElements()) {
+
+            Player key = opps.nextElement();
+
+            delta += v * Delta(player, key);
+
+        }
+        System.out.println("\t end delta");
+
+        System.out.println("\t calcing");
+        player.calcNewVolatility(v, delta);
 
     }
 
