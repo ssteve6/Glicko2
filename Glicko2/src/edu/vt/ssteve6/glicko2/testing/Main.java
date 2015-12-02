@@ -39,6 +39,8 @@ public class Main {
 		comp.recordResult(p3,  p4, Competition.LOSE, true);
 		
 		System.out.println(comp.getPlayers().toString());
+                
+                
 		
 
 	}
